@@ -21,7 +21,7 @@ const {
 } = require("./routes/transactions");
 
 app.post("/login", sendJWT);
-app.post("/signin", createUser);
+app.post("/signup", createUser);
 app.post("/newtransaction", verifyJWT, createTransaction);
 app.post("/deletetransaction", verifyJWT, deleteTransaction);
 app.get("/transactions", verifyJWT, getTransaction);

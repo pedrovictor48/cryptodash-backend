@@ -1,21 +1,18 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const joi = require("joi");
 const { userSchema } = require("../models");
+const {loginValidator, signInValidator} = require('../utils');
 
 async function sendJWT(req, res) {
     try {
         const { username, password } = req.body;
-        if (!username || !password) {
-            return res.status(400).json({
-                message: "Username and password must be in the body request",
-            });
-        }
         const bdUser = await userSchema.findOne({ username: username });
 
         if (!bdUser) {
             return res.status(401).json({ message: "Invalid credentials" });
         }
-        const check = await bcrypt.compare(password, bdUser.passwordHash);
+        const check = bcrypt.compare(password, bdUser.passwordHash);
 
         if (!check) {
             return res.status(401).json({ message: "Invalid credentials" });
@@ -55,11 +52,7 @@ function verifyJWT(req, res, next) {
 async function createUser(req, res) {
     try {
         const { username, password } = req.body;
-        if (!username || !password) {
-            return res.status(400).json({
-                message: "Username and password must be in the body request",
-            });
-        }
+    
         if (await userSchema.exists({ username: username })) {
             res.status(401).json({ message: "User already exists" });
         }
